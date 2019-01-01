@@ -72,11 +72,26 @@ const remove = (params, credentials) => {
   })
 }
 
+const getByOwner = (params, credentials) => {
+  return fetch('/api/shops/'+params.userId, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ' + credentials.t
+    }
+  }).then((response) => {
+    return response.json()
+  }).catch((err) => {
+    console.log(err)
+  })
+}
+
 export {
   create,
   list,
   listByOwner,
   read,
   update,
-  remove
+  remove,
+  getByOwner
 }

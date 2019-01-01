@@ -105,6 +105,34 @@ const read = (params, credentials) => {
   }).catch((err) => console.log(err))
 }
 
+const getShopOrdersPlacedToday = (params, credentials) => {
+  return fetch('/api/shop/' + params.shopId + '/orders/by/today', {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ' + credentials.t
+    }
+  }).then((response) => {
+    return response.json()
+  }).catch((err) => {
+    console.log(err)
+  })
+}
+
+const getOrdersPlacedWithinThisYear = (params, credentials) => {
+  return fetch('/api/shop/' + params.shopId + '/orders/by/year', {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ' + credentials.t
+    }
+  }).then((response) => {
+    return response.json()
+  }).catch((err) => {
+    console.log(err)
+  })
+}
+
 export {
   create,
   listByShop,
@@ -113,5 +141,7 @@ export {
   processCharge,
   getStatusValues,
   listByUser,
-  read
+  read,
+  getShopOrdersPlacedToday,
+  getOrdersPlacedWithinThisYear
 }

@@ -28,7 +28,8 @@ const styles = theme => ({
     fontSize: '1.2em'
   },
   addButton:{
-    float:'right'
+    float:'right',
+    margin: '5px 10px'
   },
   leftIcon: {
     marginRight: "8px"
@@ -73,6 +74,13 @@ class MyShops extends Component {
         <Typography type="title" className={classes.title}>
           Your Shops
           <span className={classes.addButton}>
+            <Link to="/seller/analyze/shops">
+              <Button color="primary" variant="raised">
+                <Icon className={classes.leftIcon}>timeline</Icon>  Analyze My Shops
+              </Button>
+            </Link>
+          </span>
+          <span className={classes.addButton}>
             <Link to="/seller/shop/new">
               <Button color="primary" variant="raised">
                 <Icon className={classes.leftIcon}>add_box</Icon>  New Shop
@@ -90,6 +98,11 @@ class MyShops extends Component {
                 <ListItemText primary={shop.name} secondary={shop.description}/>
                 { auth.isAuthenticated().user && auth.isAuthenticated().user._id == shop.owner._id &&
                   (<ListItemSecondaryAction>
+                    <Link to={"/seller/analyze/" + shop.name+ '/'+shop._id}>
+                      <Button aria-label="Orders" color="primary">
+                        Analyze this Shop
+                      </Button>
+                    </Link>
                     <Link to={"/seller/orders/" + shop.name+ '/'+shop._id}>
                       <Button aria-label="Orders" color="primary">
                         View Orders

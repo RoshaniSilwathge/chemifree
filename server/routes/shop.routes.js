@@ -25,6 +25,9 @@ router.route('/api/shops/logo/:shopId')
 router.route('/api/shops/defaultphoto')
   .get(shopCtrl.defaultPhoto)
 
+router.route('/api/shops/:userId')
+  .get(authCtrl.requireSignin, authCtrl.hasAuthorization, shopCtrl.findByOwner)
+
 router.param('shopId', shopCtrl.shopByID)
 router.param('userId', userCtrl.userByID)
 

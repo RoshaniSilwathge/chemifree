@@ -128,6 +128,17 @@ const remove = (req, res, next) => {
   })
 }
 
+const findByOwner = (req, res) => {
+  Shop.find({owner: req.profile._id},{_id:1, name:1}, (err, shops) => {
+    if (err) {
+      return res.status(400).json({
+        error: errorHandler.getErrorMessage(err)
+      })
+    }
+    res.json(shops)
+  })
+}
+
 export default {
   create,
   shopByID,
@@ -138,5 +149,6 @@ export default {
   read,
   update,
   isOwner,
-  remove
+  remove,
+  findByOwner
 }

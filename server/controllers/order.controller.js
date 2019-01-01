@@ -1,4 +1,5 @@
 import {Order, CartItem} from '../models/order.model'
+import Product from '../models/product.model'
 import _ from 'lodash'
 import errorHandler from './../helpers/dbErrorHandler'
 
@@ -70,6 +71,56 @@ const listByUser = (req, res) => {
         })
 }
 
+const findOrdersPlacedWithinToday = (req, res) => {
+  var start = new Date();
+  start.setHours(0,0,0,0);
+
+  var end = new Date();
+  end.setHours(23,59,59,999);
+
+  Order.find({"products.shop": req.shop._id,"created":{$gte: start, $lt: end}},{ 'products.$': 1,'user':1 })
+  .populate({path: 'products.product', select: '_id price'})
+  .sort('-created')
+  .exec((err, orders) => {
+    if (err) {
+      return res.status(400).json({
+        error: errorHandler.getErrorMessage(err)
+      })
+    }
+    res.json(orders)
+  })
+}
+
+const findOrdersPlacedWithinThisYear = (req, res) => {
+  var start = new Date(new Date().getFullYear(), 0, 1);
+  start.setHours(0,0,0,0);
+
+  var end = new Date(new Date().getFullYear(), 11, 31);
+  end.setHours(23,59,59,999);
+
+  Order.aggregate([
+    {$match: {"products.shop": req.shop._id,"created":{$gte: start, $lt: end}}},
+    {$project: {
+      _id: 1,created:1,user:1, products:1, month: {$month: '$created'}}
+    }
+  ]).exec((err, orders) => {
+      if (err) {
+        return res.status(400).json({
+          error: errorHandler.getErrorMessage(err)
+        })
+      }
+      Product.populate(orders, {path: 'products.product', select: '_id price'}, function(err, populatedOrders) {
+            if (err) {
+              return res.status(400).json({
+                error: errorHandler.getErrorMessage(err)
+              })
+            }
+            res.json(populatedOrders)
+      });
+      
+    })
+}
+
 const read = (req, res) => {
   return res.json(req.order)
 }
@@ -81,5 +132,7 @@ export default {
   getStatusValues,
   orderByID,
   listByUser,
-  read
+  read,
+  findOrdersPlacedWithinToday,
+  findOrdersPlacedWithinThisYear
 }
